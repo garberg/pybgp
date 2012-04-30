@@ -7,6 +7,8 @@ from odict import OrderedDict as OD
 
 from pybgp import nlri, pathattr, exceptions
 
+NOTIFICATION_LENGTH = 2
+
 class Open:
     kind = 'open'
     number = 1
@@ -202,7 +204,7 @@ class Update:
         for p in pathattr:
             self.pathattr[p.type] = p
 
-    def from_bytes(cls, bytes):
+    def from_bytes(cls, bytes, ext_asn=False):
         self = cls()
 
         d = {}
@@ -224,7 +226,7 @@ class Update:
 
         while idx < len(bytes):
 
-            used, pattr = pathattr.decode(bytes, idx)
+            used, pattr = pathattr.decode(bytes, idx, ext_asn)
             idx += used
             self.pathattr[pattr.type] = pattr
 

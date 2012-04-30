@@ -4,7 +4,7 @@ import socket
 
 from pybgp import nlri
 
-def decode(bytes, idx=0):
+def decode(bytes, idx=0, ext_asn=False):
     flagb, type = struct.unpack_from('BB', bytes, idx)
     idx += 2
     used = 2
@@ -25,7 +25,7 @@ def decode(bytes, idx=0):
     if type==1:
         obj = Origin.from_bytes(vl)
     elif type==2:
-        obj = AsPath.from_bytes(vl)
+        obj = AsPath.from_bytes(vl, ext_asn)
     elif type==3:
         obj = NextHop.from_bytes(vl)
     elif type==4:
@@ -167,7 +167,7 @@ class AsPath(PathAttr):
         s += '>'
         return s
 
-    def from_bytes(cls, val):
+    def from_bytes(cls, val, ext_asn=False):
         value = []
         iidx = 0
 
@@ -187,8 +187,12 @@ class AsPath(PathAttr):
                 raise Exception('unknown segment type')
 
             for i in range(numas):
-                asnum, = struct.unpack_from('!H', val, iidx)
-                iidx += 2
+                if ext_asn:
+                    asnum, = struct.unpack_from('!L', val, iidx)
+                    iidx += 4
+                else:
+                    asnum, = struct.unpack_from('!H', val, iidx)
+                    iidx += 2
 
                 add(asnum)
 
