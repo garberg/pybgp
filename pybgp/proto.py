@@ -2,7 +2,7 @@
 import struct
 import socket
 
-from odict import OrderedDict as OD
+from collections import OrderedDict as OD
 
 
 from pybgp import nlri, pathattr, exceptions

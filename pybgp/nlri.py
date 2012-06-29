@@ -3,7 +3,7 @@ import array
 import struct
 import socket
 
-from odict import OrderedDict as OD
+from collections import OrderedDict as OD
 
 class NLRI:
     def __init__(self, afi, safi, val):
